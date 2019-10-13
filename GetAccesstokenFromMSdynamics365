@@ -1,0 +1,31 @@
+String url = 'https://login.microsoftonline.com/common/oauth2/token';
+String clientid = '######################'; // paste client ID
+String clientSec = '######################'; //paste client Secrete
+String username = '######################'; //put your username
+String password = '######################'; //put your password
+String resource = '######################'; // Resource Name
+String body = 'client_id='+clientid+'&client_secret='+clientSec+'&username='+username+'&password='+password+'&resource='+resource+'&grant_type=password';
+HttpRequest req=new HttpRequest();
+req.setEndpoint(url);
+req.setHeader('Accept','application/json');
+req.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+req.setBody(body);
+req.setMethod('POST');
+Http h=new Http();
+HttpResponse res=h.send(req);
+system.debug('Response Body: = > '+res.getBody());
+// Parse JSON response to get AccessToken.
+JSONParser parser = JSON.createParser(res.getBody());
+String accessToken = '';
+while (parser.nextToken() != null) {
+if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && 
+(parser.getText() == 'access_token')) {
+// Get the value.
+parser.nextToken();
+accessToken += parser.getText();
+}
+}
+system.debug('Access Token =: ' + accessToken);
+
+
+MSDynamicOpptyGETRequest.getOpportunitiesFromMSDynamic(accessToken);
