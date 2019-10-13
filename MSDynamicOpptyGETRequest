@@ -1,0 +1,37 @@
+public class MSDynamicOpptyGETRequest {
+
+public static void getOpportunitiesFromMSDynamic(String accessToken){
+String endpointURL = 'https://lirikuser.crm8.dynamics.com/api/data/v9.0/opportunities?$select=name,opportunityid&$expand=customerid_account($select=name)&$top=30';
+HttpRequest req=new HttpRequest();
+req.setEndpoint(endpointURL);
+req.setHeader('Accept','application/json');
+req.setHeader('OData-MaxVersion', '4.0');
+req.setHeader('OData-Version', '4.0');
+req.setHeader('Authorization', 'Bearer '+accessToken);
+req.setHeader('Content-Type','application/json; odata.metadata=minimal');
+req.setMethod('GET');
+Http h=new Http();
+HttpResponse res=h.send(req);
+system.debug('Accounts: ' + res.getBody());
+//JSON Parser
+JSONParser parser = JSON.createParser(res.getBody());
+while (parser.nextToken() != null) {
+ //   system.debug('parser.nextToken : '+parser.nextToken());
+//    system.debug('parser.getText() : '+parser.getText());
+if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && 
+(parser.getText() == 'name')) {
+// Get the value.
+parser.nextToken();
+system.debug('Opportunity Name->: '+parser.getText());
+ }
+if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && 
+(parser.getText() == 'opportunityid')) {
+// Get the value.
+//system.debug('parser.getText() : '+parser.getText());
+parser.nextToken();
+
+system.debug('Opportunity Id->: '+parser.getText());
+ }
+}
+}
+}
