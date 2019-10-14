@@ -1,37 +1,67 @@
 public class SFtoMSDynamicRestRequest {
 
-public static void getOpportunitiesFromMSDynamic(String accessToken){
-String endpointURL = 'https://lirikuser.crm8.dynamics.com/api/data/v9.0/opportunities?$select=name,opportunityid&$expand=customerid_account($select=name)&$top=30';
-HttpRequest req=new HttpRequest();
-req.setEndpoint(endpointURL);
-req.setHeader('Accept','application/json');
-req.setHeader('OData-MaxVersion', '4.0');
-req.setHeader('OData-Version', '4.0');
-req.setHeader('Authorization', 'Bearer '+accessToken);
-req.setHeader('Content-Type','application/json; odata.metadata=minimal');
-req.setMethod('GET');
-Http h=new Http();
-HttpResponse res=h.send(req);
-system.debug('Accounts: ' + res.getBody());
-//JSON Parser
-JSONParser parser = JSON.createParser(res.getBody());
-while (parser.nextToken() != null) {
- //   system.debug('parser.nextToken : '+parser.nextToken());
-//    system.debug('parser.getText() : '+parser.getText());
-if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && 
-(parser.getText() == 'name')) {
-// Get the value.
-parser.nextToken();
-system.debug('Opportunity Name->: '+parser.getText());
- }
-if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && 
-(parser.getText() == 'opportunityid')) {
-// Get the value.
-//system.debug('parser.getText() : '+parser.getText());
-parser.nextToken();
+  public static void getOpportunitiesFromMSDynamic(String accessToken){
+        String endpointURL = 'https://lirikuser.crm8.dynamics.com/api/data/v9.0/opportunities?$select=name,opportunityid&$expand=customerid_account($select=name)&$top=30';
+        HttpRequest req=new HttpRequest();
+        req.setEndpoint(endpointURL);
+        req.setHeader('Accept','application/json');
+        req.setHeader('OData-MaxVersion', '4.0');
+        req.setHeader('OData-Version', '4.0');
+        req.setHeader('Authorization', 'Bearer '+accessToken);
+        req.setHeader('Content-Type','application/json; odata.metadata=minimal');
+        req.setMethod('GET');
+        Http h=new Http();
+        HttpResponse res=h.send(req);
+        system.debug('Accounts: ' + res.getBody());
+        //JSON Parser
 
-system.debug('Opportunity Id->: '+parser.getText());
- }
+        JSONParser parser = JSON.createParser(res.getBody());
+        while (parser.nextToken() != null) {
+            //   system.debug('parser.nextToken : '+parser.nextToken());
+            //    system.debug('parser.getText() : '+parser.getText());
+            if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && 
+                (parser.getText() == 'name')) {
+                    // Get the value.
+                    parser.nextToken();
+                    system.debug('Opportunity Name->: '+parser.getText());
+                }
+            if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && 
+                (parser.getText() == 'opportunityid')) {
+                    // Get the value.
+                    //system.debug('parser.getText() : '+parser.getText());
+                    parser.nextToken();
+                    
+                    system.debug('Opportunity Id->: '+parser.getText());
+                }
+        }
+    }
+    
+    
+    // POST - Request
+    
+    
+    public static void postAccountsFromSFtoMSDynamic(String accessToken){
+        String endpointURL = 'https://lirikuser.crm8.dynamics.com/api/data/v9.0/accounts';
+		HttpRequest req = new HttpRequest();
+        req.setEndpoint(endpointURL);
+        req.setHeader('Accept','application/json');
+        req.setHeader('OData-MaxVersion', '4.0');
+        req.setHeader('OData-Version', '4.0');
+        req.setHeader('Authorization', 'Bearer '+accessToken);
+        req.setHeader('Content-Type','application/json; odata.metadata=minimal');
+        req.setMethod('POST');
+        req.setBody('{"name": "Demo Account","creditonhold": false, "address1_latitude": 47.639583,"description": "This is the description of the sample account","revenue": 5000000,"accountcategorycode": 1,"telephone1":"555-7677"}');   
+        //system.debug('Accounts: ' + res.getBody());
+        //JSON Parser
+        Http http = new Http();
+        HttpResponse response = http.send(req);
+// Parse the JSON response
+if (response.getStatusCode() != 201) {
+    System.debug('The status code returned was not expected: ' +
+        response.getStatusCode() + ' ' + response.getStatus());
+} else {
+    System.debug(response.getBody());
 }
-}
+    }
+    
 }
