@@ -28,4 +28,4 @@ accessToken += parser.getText();
 system.debug('Access Token =: ' + accessToken);
 
 
-MSDynamicOpptyGETRequest.getOpportunitiesFromMSDynamic(accessToken);
+SFtoMSDynamicRestRequest.getOpportunitiesFromMSDynamic(accessToken);
