@@ -1,4 +1,4 @@
-public class MSDynamicOpptyGETRequest {
+public class SFtoMSDynamicRestRequest {
 
 public static void getOpportunitiesFromMSDynamic(String accessToken){
 String endpointURL = 'https://lirikuser.crm8.dynamics.com/api/data/v9.0/opportunities?$select=name,opportunityid&$expand=customerid_account($select=name)&$top=30';
